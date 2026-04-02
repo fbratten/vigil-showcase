@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vigil - Self-scheduling Follow-up MCP Server</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; line-height: 1.6; }
+        .hero { text-align: center; padding: 4rem 2rem 3rem; background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); }
+        .hero h1 { font-size: 3rem; color: #f59e0b; margin-bottom: 0.5rem; }
+        .hero .version { display: inline-block; background: #92400e33; color: #f59e0b; padding: 0.2rem 0.8rem; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1rem; }
+        .hero .tagline { font-size: 1.2rem; color: #94a3b8; max-width: 600px; margin: 0 auto 2rem; }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
+        .section { padding: 2.5rem 0; border-bottom: 1px solid #1e293b; }
+        .section:last-child { border-bottom: none; }
+        .section h2 { font-size: 1.5rem; color: #fbbf24; margin-bottom: 1.5rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem; }
+        .card { background: #1e293b; border-radius: 10px; padding: 1.5rem; border: 1px solid #334155; transition: border-color 0.2s; }
+        .card:hover { border-color: #f59e0b; }
+        .card h3 { color: #fbbf24; font-size: 1.05rem; margin-bottom: 0.5rem; }
+        .card p { color: #94a3b8; font-size: 0.95rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        th, td { text-align: left; padding: 0.7rem 1rem; border-bottom: 1px solid #1e293b; }
+        th { color: #f59e0b; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        td { color: #cbd5e1; }
+        code { background: #1e293b; color: #fbbf24; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9rem; }
+        pre { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1.2rem; overflow-x: auto; font-size: 0.9rem; line-height: 1.5; color: #e2e8f0; margin: 1rem 0; }
+        .btn { display: inline-block; background: #d97706; color: white; padding: 0.7rem 1.8rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background 0.2s; margin: 0.3rem; }
+        .btn:hover { background: #b45309; }
+        .btn-outline { background: transparent; border: 2px solid #d97706; color: #fbbf24; }
+        .btn-outline:hover { background: #d9770633; }
+        .links { text-align: center; margin: 2rem 0; }
+        footer { text-align: center; padding: 2rem; color: #475569; font-size: 0.85rem; }
+        footer a { color: #d97706; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 600px) { .hero h1 { font-size: 2rem; } .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>vigil</h1>
+        <span class="version">v0.15.0</span>
+        <p class="tagline">Self-scheduling follow-up MCP server. No external scheduler, no gateway, no cron.</p>
+        <div class="links">
+            <a href="https://github.com/fbratten/vigil" class="btn">Source Code</a>
+            <a href="https://github.com/fbratten/vigil#how-it-works" class="btn btn-outline">How It Works</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>What is vigil?</h2>
+            <p>vigil is an MCP server that schedules and monitors follow-up tasks autonomously. When an AI agent needs to check something later - build status, deployment health, async operations - vigil handles the scheduling, checking, retries, and notifications internally.</p>
+            <p style="margin-top: 1rem; color: #94a3b8;">Single dependency (mcp). 148 passing tests. 13 notification channels.</p>
+        </div>
+
+        <div class="section">
+            <h2>How It Works</h2>
+            <pre>
+1. Agent calls loop_schedule with a task + check command
+2. Internal scheduler thread polls every 10s
+3. When it's time, the check runs automatically
+4. Success -> loop closes. Failure -> retry with backoff. Timeout -> expire.
+5. Notifications via Slack, Telegram, Discord, Teams, email, webhook, and 7 more channels
+            </pre>
+        </div>
+
+        <div class="section">
+            <h2>11 MCP Tools</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>loop_schedule</h3>
+                    <p>Schedule a follow-up with task, check command, timing, and retry policy</p>
+                </div>
+                <div class="card">
+                    <h3>loop_check</h3>
+                    <p>Run a check immediately without waiting for the scheduler</p>
+                </div>
+                <div class="card">
+                    <h3>loop_list</h3>
+                    <p>List all tasks with optional status filter</p>
+                </div>
+                <div class="card">
+                    <h3>loop_cancel</h3>
+                    <p>Cancel a pending task before it completes</p>
+                </div>
+                <div class="card">
+                    <h3>loop_batch</h3>
+                    <p>Schedule multiple follow-ups in a single call</p>
+                </div>
+                <div class="card">
+                    <h3>loop_dashboard</h3>
+                    <p>Summary view: active, completed, failed counts + recent events</p>
+                </div>
+                <div class="card">
+                    <h3>loop_history</h3>
+                    <p>Execution history for a specific task</p>
+                </div>
+                <div class="card">
+                    <h3>loop_schedule_template</h3>
+                    <p>Schedule from predefined templates (CI check, deploy verify, etc.)</p>
+                </div>
+                <div class="card">
+                    <h3>loop_write_result</h3>
+                    <p>Manually write a result for tasks that can't be auto-checked</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>5 Check Types</h2>
+            <table>
+                <tr><th>Type</th><th>How It Works</th></tr>
+                <tr><td><code>shell</code></td><td>Run a command, exit 0 = success</td></tr>
+                <tr><td><code>http</code></td><td>GET a URL, 2xx = success</td></tr>
+                <tr><td><code>file</code></td><td>Check if file exists or was recently modified</td></tr>
+                <tr><td><code>process</code></td><td>Check if a PID is still running</td></tr>
+                <tr><td><code>composite</code></td><td>Run multiple checks, all must pass</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>13 Notification Channels</h2>
+            <p style="color: #94a3b8;">file (JSONL) | webhook (POST) | Slack (Block Kit) | Telegram (Bot API) | Discord (Embeds) | Teams (Adaptive Cards) | ntfy.sh | Pushover | Gotify | Matrix | Twilio SMS | Google Chat (Cards v2) | email (SMTP)</p>
+        </div>
+
+        <div class="section" style="text-align: center;">
+            <h2>Get Involved</h2>
+            <p style="margin-bottom: 1.5rem; color: #94a3b8;">vigil is open source under the MIT license.</p>
+            <a href="https://github.com/fbratten/vigil" class="btn">View on GitHub</a>
+            <a href="https://github.com/fbratten/vigil/issues" class="btn btn-outline">Report Issue</a>
+        </div>
+    </div>
+
+    <footer>
+        Built by <a href="https://github.com/fbratten">Fredrik Bratten</a> |
+        <a href="https://adaptivearts.ai">AdaptiveArts.ai</a> |
+        MIT License
+    </footer>
+</body>
+</html>
